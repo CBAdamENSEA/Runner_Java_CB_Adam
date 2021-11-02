@@ -6,7 +6,9 @@ public class Camera {
     private double ax;
     private double ay;
     private Hero center;
-    private final double k=1;
+    private final double k=0.00001;
+    private final double f=0.002;
+    private long now=0;
 
     public Camera(double x, double y, Hero center) {
         this.x = x;
@@ -16,6 +18,7 @@ public class Camera {
         vy=0;
         ay=0;
         ax=0;
+
     }
 
     public double getX() {
@@ -27,12 +30,10 @@ public class Camera {
     }
 
     public void update(double time){
-        ax=(center.getX()-x)*k;
+        ax=(center.getX()-x)*k-(f*vx);
         vx=vx+ax*time;
         x=x+vx*time;
-
-    }
-    void update(long time){
+        //System.out.println("Camera pos : "+x +" vx : "+vx+" ax : "+ax+" time ="+time);
 
     }
 
