@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -12,11 +13,16 @@ import javafx.scene.media.MediaPlayer;
 public class Hellodemo extends Application{
         public void start(Stage primaryStage){
             primaryStage.setTitle("Runner Game");
-            Group root = new Group();
 
-            GameScene gs = new GameScene(root);
+            Group root2 = new Group();
 
-            primaryStage.setScene(gs);
+            WelcomeScene ws= new WelcomeScene(root2, primaryStage);
+
+
+
+
+
+            primaryStage.setScene(ws);
             primaryStage.show();
 
         }

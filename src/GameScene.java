@@ -6,8 +6,15 @@ import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Random;
 
 
 public class GameScene extends Scene {
@@ -15,9 +22,12 @@ public class GameScene extends Scene {
     private staticThing left;
     private staticThing right;
     private staticThing hearts;
+    Text score;
+    private ArrayList<Foe> foeList=null;
     //private Foe foe;
     private Hero myHero;
     private int numberOfLives;
+    private int numberOfFoes;
     private long lastTime=0;
     AnimationTimer timer = new AnimationTimer()
     {
@@ -38,7 +48,12 @@ public class GameScene extends Scene {
 
     public GameScene(Group g) {
         super(g,1400,706);
-
+        score= new Text();
+        score.setX(100);
+        score.setText("score= 0");
+        score.setY(20);
+        score.setFill(Color.WHITE);
+        score.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
         numberOfLives=3;
         //left = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\desert.png",800,400);
         //right = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\desert.png",800,400);
@@ -47,12 +62,31 @@ public class GameScene extends Scene {
         right = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\background.png",2800,706);
         myHero=new Hero(800,300,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\ENSEA_Hero.png");
 
+        Random r = new Random();
+        numberOfFoes= r.nextInt(500-100) + 100;
+        foeList=new ArrayList<Foe>();
+        int min_dist=1000;
+        for (int i=0;i<numberOfFoes;i++)
+        {
+            min_dist+=r.nextInt(3000-800) + 800;
+            Foe newFoe= new Foe(min_dist,520,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\obstacle1.png");
+            foeList.add(newFoe);
+        }
+
         hearts= new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\hearts.png",81,27);
+        hearts.getBackView().setX(5);
         //foe= new Foe(1900,520,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\obstacle1.png");
         g.getChildren().add(left.getBackView());
         g.getChildren().add(right.getBackView());
-        g.getChildren().add(myHero.getAnimatedView());
         g.getChildren().add(hearts.getBackView());
+        for (Foe sfoe: foeList)
+
+        {
+            g.getChildren().add(sfoe.getAnimatedView());
+        }
+
+        g.getChildren().add(myHero.getAnimatedView());
+        g.getChildren().add(score);
         //g.getChildren().add(foe.getAnimatedView());
         camera = new Camera(1200,0,myHero);
         timer.start();
@@ -77,6 +111,25 @@ public class GameScene extends Scene {
         });
         myHero.getAnimatedView().setX(myHero.getX()-camera.getX());
         myHero.getAnimatedView().setY(myHero.getY()-camera.getY());
+        boolean test=false;
+        for (Foe ufoe : foeList)
+        {
+            ufoe.update(camera);
+            if (myHero.getHitBox().intersects(ufoe.getHitBox())) test=true;
+            //System.out.println("test= "+test);
+            //System.out.println("Hero  minx="+myHero.getHitBox().getMinX()+" miny="+myHero.getHitBox().getMinY()+" width="+myHero.getHitBox().getWidth()+" height="+myHero.getHitBox().getHeight());
+        }
+
+        if (test)
+        {
+            timer.stop();
+
+        }
+        else {
+
+        }
+        score.setText("SCORE= "+(int)((myHero.getX()-800)/100));
+        System.out.println(score.getText());
         //foe.getAnimatedView().setX(foe.getX()-camera.getX());
         //foe.getAnimatedView().setY(foe.getY()-camera.getY());
 
