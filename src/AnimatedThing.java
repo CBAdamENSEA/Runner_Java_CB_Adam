@@ -101,9 +101,9 @@ abstract public class AnimatedThing {
         double minx=0,miny=0,width=0,height=0;
         switch (index){
             case 0:
-                minx=x+59;
+                minx=x+61;
                 miny=y+21;
-                width=128;
+                width=125;
                 height=296;
                 break;
             case 1:
