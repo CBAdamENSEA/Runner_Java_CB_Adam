@@ -3,6 +3,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 
+import java.security.PublicKey;
+
 public class MovingThing {
     public double getX() {
         return x;
@@ -34,7 +36,10 @@ public class MovingThing {
         rectangle=new Rectangle();
 
     }
-    Rectangle2D getHitBox(){
+    public Rectangle2D getHitBox(){
         return (new Rectangle2D(x,y,animatedView.getImage().getWidth(),animatedView.getImage().getHeight()));
+    }
+    public double getWidth(){
+        return animatedView.getImage().getWidth();
     }
 }

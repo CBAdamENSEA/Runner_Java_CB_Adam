@@ -5,16 +5,10 @@ import javafx.stage.Stage;
 
 
 public class WelcomeScene extends Scene {
-    Button startButton;
-    public WelcomeScene(Group g, Stage primaryStage){
+    private staticThing bg;
+    public WelcomeScene(Group g){
         super(g,1400,706);
-        Button startButton=new Button("START");
-        g.getChildren().add(startButton);
-        startButton.setOnAction(e -> {
-            Group root = new Group();
-            GameScene gs = new GameScene(root);
-            primaryStage.setScene(gs);
-        });
-
+        bg = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\welcome_scene.png",1400,706);
+        g.getChildren().add(bg.getBackView());
     }
 }

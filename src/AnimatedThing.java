@@ -20,6 +20,11 @@ abstract public class AnimatedThing {
     }
 
     private ImageView animatedView;
+
+    public int getAtt() {
+        return att;
+    }
+
     private int att;
     private int index;
     private double dt;
@@ -57,16 +62,21 @@ abstract public class AnimatedThing {
     void update(long time, double elapsedTime){
         //this.ax+=(0.000000001*elapsedTime);
         //this.vx+=this.ax*elapsedTime;
-        if (x>4000) {
-            this.ax = (int) (x / 4000);
+        System.out.println("att= "+att+" y="+y);
+        if (att!=0) {
+            index= (int) (((time/100000000))%12);
+            if (x > 4000) {
+                this.ax = (int) (x / 4000);
+            }
+            this.vx = 0.5 + ax / 100;
+            this.x += this.vx * elapsedTime;
+            g = 2 * 150 / (Math.pow(400 / vx, 2));
         }
-        this.vx=0.5+ax/100;
-        this.x+=this.vx*elapsedTime;
-        g=2*150/(Math.pow(400/vx,2));
-
-        vy+=g*elapsedTime;
-        y+=vy*elapsedTime;
-        if (y>=300)
+        if (att==2) {
+            vy += g * elapsedTime;
+            y += vy * elapsedTime;
+        }
+        if ((y>=300)&(att==2))
         {
             y=300;
             vy=0;
@@ -78,16 +88,15 @@ abstract public class AnimatedThing {
         rectangle.setWidth(animatedView.getImage().getWidth());
         rectangle.setHeight(animatedView.getImage().getHeight());
 
-        index= (int) (((time/100000000))%12);
         animatedView.setViewport(new Rectangle2D(index*offs,0,w_size,317));
         //animatedView.setViewport(new Rectangle2D(4+index*offs,2,w_size,97));
 
-        if (att==2) {
-
-
-        }
         //System.out.println("ax="+ax+" vx="+vx+" x="+x+" g="+g+" vy="+vy);
 
+    }
+    public void resumeGame(Foe hitFoe){
+        x= hitFoe.getX()+hitFoe.getWidth()+1;
+        att=1;
     }
 
     public void jump() {
@@ -96,6 +105,19 @@ abstract public class AnimatedThing {
         if (y==300) this.vy=-Math.sqrt(2*150*this.g);
         //vy=-0.75;
 
+    }
+    public void stop()
+    {
+        att=0;
+    }
+    public void run() {
+        this.att=1;
+    }
+    public void startAgain()
+    {
+        x=800;
+        y=300;
+        att=0;
     }
     Rectangle2D getHitBox(){
         double minx=0,miny=0,width=0,height=0;

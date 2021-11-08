@@ -29,16 +29,20 @@ public class GameScene extends Scene {
     private int numberOfLives;
     private int numberOfFoes;
     private long lastTime=0;
+    private int ON=0;
+    private boolean test=false;
     AnimationTimer timer = new AnimationTimer()
     {
         @Override
         public void handle(long time){
             double elapsedTime=(double) (time-lastTime)/1000000;
             if (elapsedTime>100) elapsedTime=0;
+
             myHero.update(time,elapsedTime);
+
             camera.update(elapsedTime);
             lastTime=time;
-            render();
+            render(time);
 
         }
     };
@@ -90,39 +94,86 @@ public class GameScene extends Scene {
         //g.getChildren().add(foe.getAnimatedView());
         camera = new Camera(1200,0,myHero);
         timer.start();
-        render();
+        long time=0;
+        render(time);
+
 
 
 
     }
 
-    void render(){
+    void render(long time) {
 
         double offset = (camera.getX())%left.getW();
         left.getBackView().setViewport(new Rectangle2D(offset, 0, left.getW()-offset, left.getL()));
         right.getBackView().setX(right.getW()-offset);
         hearts.getBackView().setViewport(new Rectangle2D(0,0 , (numberOfLives*27)+1,27 ));
         //hearts.getBackView().setX();
-        this.setOnKeyPressed(ev -> {
-            if (ev.getCode() == KeyCode.SPACE) {
-                System.out.println("JUMP");
-                myHero.jump();
-            }
-        });
+        if (myHero.getAtt()==0) {
+            this.setOnKeyPressed(ev -> {
+                if (ev.getCode() == KeyCode.ENTER) {
+                    System.out.println("RUN");
+                    myHero.run();
+                    ON = 1;
+                }
+            });
+        }
+        if (myHero.getAtt()==1) {
+            this.setOnKeyPressed(ev -> {
+                if (ev.getCode() == KeyCode.SPACE) {
+                    System.out.println("JUMP");
+                    myHero.jump();
+                }
+            });
+        }
         myHero.getAnimatedView().setX(myHero.getX()-camera.getX());
         myHero.getAnimatedView().setY(myHero.getY()-camera.getY());
-        boolean test=false;
-        for (Foe ufoe : foeList)
-        {
-            ufoe.update(camera);
-            if (myHero.getHitBox().intersects(ufoe.getHitBox())) test=true;
-            //System.out.println("test= "+test);
-            //System.out.println("Hero  minx="+myHero.getHitBox().getMinX()+" miny="+myHero.getHitBox().getMinY()+" width="+myHero.getHitBox().getWidth()+" height="+myHero.getHitBox().getHeight());
-        }
+        //boolean test=false;
+        Foe hitFoe=null;
+        long now=0;
 
+            for (Foe ufoe : foeList) {
+                ufoe.update(camera);
+                if (myHero.getHitBox().intersects(ufoe.getHitBox())) {
+                    test = true;
+                    hitFoe = ufoe;
+                    now = time;
+
+
+                }
+                //System.out.println("test= "+test);
+                //System.out.println("Hero  minx="+myHero.getHitBox().getMinX()+" miny="+myHero.getHitBox().getMinY()+" width="+myHero.getHitBox().getWidth()+" height="+myHero.getHitBox().getHeight());
+            }
+
+        long i=0;
         if (test)
         {
-            timer.stop();
+            myHero.stop();
+
+            if (numberOfLives>1)
+            {
+
+                    test = false;
+                    myHero.resumeGame(hitFoe);
+                    numberOfLives -= 1;
+
+
+
+            }
+            else
+            {
+                numberOfLives=0;
+                System.out.println("Game Over");
+                this.setOnKeyPressed(ev -> {
+                    if (ev.getCode() == KeyCode.ENTER) {
+                        System.out.println("Start Again");
+                        myHero.startAgain(); //A changer (mêmes obstacles)
+                        numberOfLives=3;
+                    }
+                });
+
+
+            }
 
         }
         else {
