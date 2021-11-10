@@ -19,7 +19,7 @@ public class HighScoreScene extends Scene {
     public HighScoreScene(Group g){
         super(g,1400,706);
         bg=new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\high_score.png",1400,706);
-        g.getChildren().add(bg.getBackView());
+        g.getChildren().add(0, bg.getBackView());
 
         //high_scores.add(readFile("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\high_score.txt"));
         int j=0;
@@ -28,11 +28,11 @@ public class HighScoreScene extends Scene {
         {
             j=i+1;
             k=new Text();
-            k.setX(1120);
-            k.setY(86+i*100);
-            k.setText("n°"+j+":   "+high_scores.get(i));
+            k.setX(990);
+            k.setY(95+i*100);
+            k.setText("n°"+j+":        "+high_scores.get(i));
             k.setFill(Color.BLACK);
-            k.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
+            k.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 30));
             scores.add(i,k);
             g.getChildren().add(k);
         }
@@ -53,7 +53,7 @@ public class HighScoreScene extends Scene {
         for (Text i:scores )
         {
             j++;
-            i.setText("n°"+j+":   "+high_scores.get(j-1));
+            i.setText("n°"+j+":        "+high_scores.get(j-1));
         }
 
     }

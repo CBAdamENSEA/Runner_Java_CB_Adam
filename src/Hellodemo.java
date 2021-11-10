@@ -21,6 +21,7 @@ public class Hellodemo extends Application{
             Group root4 =new Group();
             WelcomeScene ws= new WelcomeScene(root2);
             HighScoreScene hs=new HighScoreScene(root3);
+            InstructionsScene is= new InstructionsScene(root4);
 
 
 
@@ -28,24 +29,37 @@ public class Hellodemo extends Application{
             Button hsButton=newButton(1000,280,250,80,"High Scores","b");
             Button instButton=newButton(1000,410,250,80,"Instructions","b");
             Button saButton=newButton(600,580,250,80,"Start Again","w");
-            Button homeButton=newButton(1000,580,250,80,"HOME","b");
-            root3.getChildren().add(homeButton);
+            Button homeButton1=newButton(1000,580,250,80,"HOME","b");
+            Button homeButton2=newButton(1000,580,250,80,"HOME","b");
+            Button homeButton3=newButton(1000,580,250,80,"HOME","b");
+            root3.getChildren().add(homeButton1);
+
+            root4.getChildren().add(homeButton2);
             root2.getChildren().add(startButton);
             root2.getChildren().add(hsButton);
             root2.getChildren().add(instButton);
 
-            homeButton.setOnAction(e -> {
+            instButton.setOnAction(e -> {
+                primaryStage.setScene(is);
+            });
+
+            homeButton1.setOnAction(e -> {
+                primaryStage.setScene(ws);
+            });
+            homeButton2.setOnAction(e -> {
+                primaryStage.setScene(ws);
+            });
+            homeButton3.setOnAction(e -> {
                 primaryStage.setScene(ws);
             });
             hsButton.setOnAction(e -> {
-
                 primaryStage.setScene(hs);
                 //hs.update();
             });
 
             startButton.setOnAction(e -> {
                 Group root = new Group();
-                GameScene gs = new GameScene(root,saButton,homeButton,hs);
+                GameScene gs = new GameScene(root,saButton,homeButton3,hs);
                 primaryStage.setScene(gs);
             });
 

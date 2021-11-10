@@ -213,7 +213,7 @@ public class GameScene extends Scene {
             }
             else
             {
-                if ((numberOfLives==0)&(Math.abs(camera.getVx())<0.01)) {
+                if (((numberOfLives==0)&(Math.abs(camera.getVx())<0.01)&(camera.getX()< myHero.getX()))) {
                     timer.stop();
                     highScoreScene.update();
                 }
