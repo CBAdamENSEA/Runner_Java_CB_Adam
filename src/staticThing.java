@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView;
 public class staticThing {
     private double w;
     private double l;
+    private Image staticImage;
     private ImageView backView;
 
     public double getW() {
@@ -17,7 +18,14 @@ public class staticThing {
     public staticThing(String fileName, double w, double l) {
         this.w=w;
         this.l=l;
-        this.backView=new ImageView(new Image(fileName));
+        this.staticImage=new Image(fileName);
+        this.backView=new ImageView(staticImage);
+    }
+    public void showImage(){
+        backView.setImage(staticImage);
+    }
+    public void hideImage(){
+        backView.setImage(null);
     }
 
     public ImageView getBackView() {

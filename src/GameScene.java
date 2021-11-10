@@ -3,6 +3,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -11,8 +12,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -22,7 +26,11 @@ public class GameScene extends Scene {
     private staticThing left;
     private staticThing right;
     private staticThing hearts;
+    private staticThing gameOver;
+    private Button startAgainButton;
+    private Button homeButton;
     Text score;
+    int scoreTotal;
     private ArrayList<Foe> foeList=null;
     //private Foe foe;
     private Hero myHero;
@@ -31,6 +39,7 @@ public class GameScene extends Scene {
     private long lastTime=0;
     private int ON=0;
     private boolean test=false;
+    public HighScoreScene highScoreScene;
     AnimationTimer timer = new AnimationTimer()
     {
         @Override
@@ -50,11 +59,21 @@ public class GameScene extends Scene {
 
     }
 
-    public GameScene(Group g) {
+    public int getScoreTotal() {
+        return scoreTotal;
+    }
+
+    public GameScene(Group g,Button saButton, Button hButton,HighScoreScene hs) {
         super(g,1400,706);
+        highScoreScene=hs;
+        startAgainButton=saButton;
+        homeButton=hButton;
+
+
+        scoreTotal=0;
         score= new Text();
         score.setX(100);
-        score.setText("score= 0");
+        score.setText("score= "+scoreTotal);
         score.setY(20);
         score.setFill(Color.WHITE);
         score.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, 20));
@@ -64,8 +83,10 @@ public class GameScene extends Scene {
         //myHero=new Hero(800,250,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\heros.png"); 2800
         left = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\background.png",2800,706);
         right = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\background.png",2800,706);
-        myHero=new Hero(800,300,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\ENSEA_Hero.png");
-
+        myHero=new Hero(800,300,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\ENSEA_Hero2.png");
+        gameOver = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\GAME_OVER.png",340,340);
+        gameOver.getBackView().setX(530);
+        gameOver.getBackView().setY(183);
         Random r = new Random();
         numberOfFoes= r.nextInt(500-100) + 100;
         foeList=new ArrayList<Foe>();
@@ -91,6 +112,12 @@ public class GameScene extends Scene {
 
         g.getChildren().add(myHero.getAnimatedView());
         g.getChildren().add(score);
+        g.getChildren().add(gameOver.getBackView());
+        g.getChildren().add(startAgainButton);
+        g.getChildren().add(homeButton);
+        startAgainButton.setVisible(false);
+        homeButton.setVisible(false);
+        gameOver.hideImage();
         //g.getChildren().add(foe.getAnimatedView());
         camera = new Camera(1200,0,myHero);
         timer.start();
@@ -100,6 +127,29 @@ public class GameScene extends Scene {
 
 
 
+    }
+    public void writeFile(String filename, int text)
+    {
+        try {
+            File myObj = new File(filename);
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+        try {
+            FileWriter myWriter = new FileWriter("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\high_score.txt");
+            myWriter.write(""+text);
+            myWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 
     void render(long time) {
@@ -146,6 +196,7 @@ public class GameScene extends Scene {
             }
 
         long i=0;
+            System.out.println("test= "+test);
         if (test)
         {
             myHero.stop();
@@ -162,15 +213,42 @@ public class GameScene extends Scene {
             }
             else
             {
+                if ((numberOfLives==0)&(Math.abs(camera.getVx())<0.01)) {
+                    timer.stop();
+                    highScoreScene.update();
+                }
+                writeFile("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\high_score.txt",scoreTotal);
+
                 numberOfLives=0;
                 System.out.println("Game Over");
+                myHero.cry();
+                gameOver.showImage();
+
+
+                startAgainButton.setOnAction(e -> {
+                    System.out.println("Start Again");
+                    myHero.startAgain(); //A changer (mêmes obstacles)
+                    timer.start();
+                    camera.startAgain();
+                    startAgainButton.setVisible(false);
+                    homeButton.setVisible(false);
+                    gameOver.hideImage();
+                    numberOfLives=3;
+                });
+                startAgainButton.setVisible(true);
+                homeButton.setVisible(true);
+
+
+                /*
                 this.setOnKeyPressed(ev -> {
                     if (ev.getCode() == KeyCode.ENTER) {
                         System.out.println("Start Again");
                         myHero.startAgain(); //A changer (mêmes obstacles)
+                        gameOver.hideImage();
                         numberOfLives=3;
                     }
                 });
+                */
 
 
             }
@@ -179,8 +257,9 @@ public class GameScene extends Scene {
         else {
 
         }
-        score.setText("SCORE= "+(int)((myHero.getX()-800)/100));
-        System.out.println(score.getText());
+        scoreTotal=(int)((myHero.getX()-800)/100);
+        score.setText("SCORE= "+scoreTotal);
+        System.out.println(score.getText()+ " Lives="+numberOfLives);
         //foe.getAnimatedView().setX(foe.getX()-camera.getX());
         //foe.getAnimatedView().setY(foe.getY()-camera.getY());
 

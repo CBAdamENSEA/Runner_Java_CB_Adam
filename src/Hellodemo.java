@@ -15,20 +15,37 @@ import javafx.scene.media.MediaPlayer;
 public class Hellodemo extends Application{
         public void start(Stage primaryStage){
             primaryStage.setTitle("Runner Game");
-            Group root = new Group();
+
             Group root2 = new Group();
             Group root3 =new Group();
             Group root4 =new Group();
             WelcomeScene ws= new WelcomeScene(root2);
-            GameScene gs = new GameScene(root);
+            HighScoreScene hs=new HighScoreScene(root3);
 
-            Button startButton=newButton(1000,150,250,80,"START");
-            Button hsButton=newButton(1000,280,250,80,"High Scores");
-            Button instButton=newButton(1000,410,250,80,"Instructions");
+
+
+            Button startButton=newButton(1000,150,250,80,"START","b");
+            Button hsButton=newButton(1000,280,250,80,"High Scores","b");
+            Button instButton=newButton(1000,410,250,80,"Instructions","b");
+            Button saButton=newButton(600,580,250,80,"Start Again","w");
+            Button homeButton=newButton(1000,580,250,80,"HOME","b");
+            root3.getChildren().add(homeButton);
             root2.getChildren().add(startButton);
             root2.getChildren().add(hsButton);
             root2.getChildren().add(instButton);
+
+            homeButton.setOnAction(e -> {
+                primaryStage.setScene(ws);
+            });
+            hsButton.setOnAction(e -> {
+
+                primaryStage.setScene(hs);
+                //hs.update();
+            });
+
             startButton.setOnAction(e -> {
+                Group root = new Group();
+                GameScene gs = new GameScene(root,saButton,homeButton,hs);
                 primaryStage.setScene(gs);
             });
 
@@ -46,11 +63,12 @@ public class Hellodemo extends Application{
 
 
         }
-        public Button newButton(double x, double y, double w, double h,String f)
+        public Button newButton(double x, double y, double w, double h,String f,String c)
         {
             Button b = new Button(f);
             b.setFont(Font.font("Arial", FontWeight.MEDIUM,30));
-            b.setStyle("-fx-background-color: #000000; -fx-border-color: #ffffff;-fx-text-fill: #ffffff;");
+            if (c=="w") b.setStyle("-fx-background-color: #ffffff; -fx-border-color: #000000;-fx-text-fill: #000000;");
+            else b.setStyle("-fx-background-color: #000000; -fx-border-color: #ffffff;-fx-text-fill: #ffffff;");
             b.setLayoutX(x);
             b.setLayoutY(y);
             b.setPrefWidth(w);

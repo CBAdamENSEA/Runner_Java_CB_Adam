@@ -62,7 +62,7 @@ abstract public class AnimatedThing {
     void update(long time, double elapsedTime){
         //this.ax+=(0.000000001*elapsedTime);
         //this.vx+=this.ax*elapsedTime;
-        System.out.println("att= "+att+" y="+y);
+        System.out.println("att= "+att+" y="+y+ " x="+x);
         if (att!=0) {
             index= (int) (((time/100000000))%12);
             if (x > 4000) {
@@ -96,6 +96,7 @@ abstract public class AnimatedThing {
     }
     public void resumeGame(Foe hitFoe){
         x= hitFoe.getX()+hitFoe.getWidth()+1;
+        y=300;
         att=1;
     }
 
@@ -113,11 +114,18 @@ abstract public class AnimatedThing {
     public void run() {
         this.att=1;
     }
+    public void cry() {
+        y=300;
+        att=0;
+        index=12;
+
+    }
     public void startAgain()
     {
         x=800;
         y=300;
         att=0;
+        index=0;
     }
     Rectangle2D getHitBox(){
         double minx=0,miny=0,width=0,height=0;
