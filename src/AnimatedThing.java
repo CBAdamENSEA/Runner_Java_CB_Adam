@@ -15,11 +15,24 @@ abstract public class AnimatedThing {
     private double x;
     private double y;
 
+    public double getInvincibility() {
+        return invincibility;
+    }
+
+    private double invincibility;
+    Image imInv;
+
     public ImageView getAnimatedView() {
         return animatedView;
     }
 
     private ImageView animatedView;
+
+    public ImageView getInvincible() {
+        return invincible;
+    }
+
+    private ImageView invincible;
 
     public int getAtt() {
         return att;
@@ -29,6 +42,7 @@ abstract public class AnimatedThing {
     private int index;
     private double dt;
     private int indM;
+    private int invIndex;
     private int w_size;
     private int offs;
     private double vy=0;
@@ -40,15 +54,18 @@ abstract public class AnimatedThing {
     private Rectangle rectangle;
 
 
-    public AnimatedThing(double x, double y, double dt, String filename) {
+    public AnimatedThing(double x, double y, double dt, String filename,String filename2) {
 
         this.x = x;
         this.y = y;
         this.animatedView =new ImageView(new Image(filename));
+        imInv=new Image(filename2);
+        this.invincible= new ImageView(imInv);
         rectangle=new Rectangle();
         //animatedView.setViewport(new Rectangle2D(20,2,60,97));
         att=0; //still
         index=0;
+        invIndex=0;
         this.dt = dt;
         //indM=5;
         indM=11;
@@ -62,15 +79,24 @@ abstract public class AnimatedThing {
     void update(long time, double elapsedTime){
         //this.ax+=(0.000000001*elapsedTime);
         //this.vx+=this.ax*elapsedTime;
-        System.out.println("att= "+att+" y="+y+ " x="+x);
+        invincible.setImage(null);
+        if ((invincibility>=0)&(att!=0))
+        {
+            invincible.setImage(imInv);
+            invincibility=invincibility-elapsedTime;
+            invIndex= (int) (((time/100000000))%2);
+            invincible.setX(animatedView.getX());
+            invincible.setY(animatedView.getY());
+        }
+        //System.out.println("att= "+att+" y="+y+ " x="+x);
         if (att!=0) {
             index= (int) (((time/100000000))%12);
             if (x > 4000) {
                 this.ax = (int) (x / 4000);
             }
-            this.vx = 0.5 + ax / 100;
+            this.vx = 0.5 + ax / 50; //100
             this.x += this.vx * elapsedTime;
-            g = 2 * 150 / (Math.pow(400 / vx, 2));
+            g = 2 * 150 / (Math.pow(300 / vx, 2)); //400
         }
         if (att==2) {
             vy += g * elapsedTime;
@@ -89,6 +115,7 @@ abstract public class AnimatedThing {
         rectangle.setHeight(animatedView.getImage().getHeight());
 
         animatedView.setViewport(new Rectangle2D(index*offs,0,w_size,317));
+        invincible.setViewport(new Rectangle2D(invIndex*offs,0,w_size,317));
         //animatedView.setViewport(new Rectangle2D(4+index*offs,2,w_size,97));
 
         //System.out.println("ax="+ax+" vx="+vx+" x="+x+" g="+g+" vy="+vy);
@@ -126,6 +153,12 @@ abstract public class AnimatedThing {
         y=300;
         att=0;
         index=0;
+        invincibility=-20;
+    }
+    public void isinvincible() {
+        invincibility=6000.0;
+
+
     }
     Rectangle2D getHitBox(){
         double minx=0,miny=0,width=0,height=0;

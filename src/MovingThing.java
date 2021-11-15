@@ -26,6 +26,7 @@ public class MovingThing {
     void update(Camera camera){
         getAnimatedView().setX(x-camera.getX());
         getAnimatedView().setY(y-camera.getY());
+        System.out.println("x="+(x-camera.getX())+" y="+(y-camera.getY()) );
 
 
     }

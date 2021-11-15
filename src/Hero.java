@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class Hero extends AnimatedThing {
 
 
-    public Hero(double x, double y, double dt, String filename) {
-        super(x, y, dt, filename);
+    public Hero(double x, double y, double dt, String filename,String filename2) {
+        super(x, y, dt, filename, filename2);
     }
 }

@@ -32,12 +32,11 @@ public class GameScene extends Scene {
     Text score;
     int scoreTotal;
     private ArrayList<Foe> foeList=null;
-    //private Foe foe;
+    int min_dist=1000;
     private Hero myHero;
     private int numberOfLives;
     private int numberOfFoes;
     private long lastTime=0;
-    private int ON=0;
     private boolean test=false;
     public HighScoreScene highScoreScene;
     AnimationTimer timer = new AnimationTimer()
@@ -83,20 +82,13 @@ public class GameScene extends Scene {
         //myHero=new Hero(800,250,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\heros.png"); 2800
         left = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\background.png",2800,706);
         right = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\background.png",2800,706);
-        myHero=new Hero(800,300,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\ENSEA_Hero2.png");
+        myHero=new Hero(800,300,0,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\ENSEA_Hero2.png",
+                "C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\invincible.png");
         gameOver = new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\GAME_OVER.png",340,340);
         gameOver.getBackView().setX(530);
         gameOver.getBackView().setY(183);
         Random r = new Random();
-        numberOfFoes= r.nextInt(500-100) + 100;
-        foeList=new ArrayList<Foe>();
-        int min_dist=1000;
-        for (int i=0;i<numberOfFoes;i++)
-        {
-            min_dist+=r.nextInt(3000-800) + 800;
-            Foe newFoe= new Foe(min_dist,520,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\obstacle1.png");
-            foeList.add(newFoe);
-        }
+        createFoes(r);
 
         hearts= new staticThing("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\hearts.png",81,27);
         hearts.getBackView().setX(5);
@@ -105,10 +97,10 @@ public class GameScene extends Scene {
         g.getChildren().add(right.getBackView());
         g.getChildren().add(hearts.getBackView());
         for (Foe sfoe: foeList)
-
         {
             g.getChildren().add(sfoe.getAnimatedView());
         }
+        g.getChildren().add(myHero.getInvincible());
 
         g.getChildren().add(myHero.getAnimatedView());
         g.getChildren().add(score);
@@ -159,33 +151,21 @@ public class GameScene extends Scene {
         right.getBackView().setX(right.getW()-offset);
         hearts.getBackView().setViewport(new Rectangle2D(0,0 , (numberOfLives*27)+1,27 ));
         //hearts.getBackView().setX();
-        if (myHero.getAtt()==0) {
-            this.setOnKeyPressed(ev -> {
-                if (ev.getCode() == KeyCode.ENTER) {
-                    System.out.println("RUN");
-                    myHero.run();
-                    ON = 1;
-                }
-            });
-        }
-        if (myHero.getAtt()==1) {
-            this.setOnKeyPressed(ev -> {
-                if (ev.getCode() == KeyCode.SPACE) {
-                    System.out.println("JUMP");
-                    myHero.jump();
-                }
-            });
-        }
-        myHero.getAnimatedView().setX(myHero.getX()-camera.getX());
-        myHero.getAnimatedView().setY(myHero.getY()-camera.getY());
-        //boolean test=false;
+        startRunning();
+        jump();
+        followHero();
+
         Foe hitFoe=null;
         long now=0;
 
             for (Foe ufoe : foeList) {
                 ufoe.update(camera);
                 if (myHero.getHitBox().intersects(ufoe.getHitBox())) {
-                    test = true;
+                    if (myHero.getInvincibility()<0)
+                    {
+                        test = true;
+                        myHero.isinvincible();
+                    }
                     hitFoe = ufoe;
                     now = time;
 
@@ -196,7 +176,7 @@ public class GameScene extends Scene {
             }
 
         long i=0;
-            System.out.println("test= "+test);
+            //System.out.println("test= "+test);
         if (test)
         {
             myHero.stop();
@@ -226,14 +206,7 @@ public class GameScene extends Scene {
 
 
                 startAgainButton.setOnAction(e -> {
-                    System.out.println("Start Again");
-                    myHero.startAgain(); //A changer (mêmes obstacles)
-                    timer.start();
-                    camera.startAgain();
-                    startAgainButton.setVisible(false);
-                    homeButton.setVisible(false);
-                    gameOver.hideImage();
-                    numberOfLives=3;
+                    startAgain();
                 });
                 startAgainButton.setVisible(true);
                 homeButton.setVisible(true);
@@ -259,11 +232,56 @@ public class GameScene extends Scene {
         }
         scoreTotal=(int)((myHero.getX()-800)/100);
         score.setText("SCORE= "+scoreTotal);
-        System.out.println(score.getText()+ " Lives="+numberOfLives);
-        //foe.getAnimatedView().setX(foe.getX()-camera.getX());
-        //foe.getAnimatedView().setY(foe.getY()-camera.getY());
+        //score.setText(""+myHero.getInvincibility());
+        //System.out.println(score.getText()+ " Lives="+numberOfLives);
 
 
 
+    }
+    public void createFoes(Random r){
+        foeList=new ArrayList<Foe>();
+        numberOfFoes= r.nextInt(500-100) + 100;
+        for (int i=0;i<numberOfFoes;i++)
+        {
+            min_dist+=r.nextInt(3000-800) + 800;
+            Foe newFoe= new Foe(min_dist,520,"C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\obstacle1.png");
+            foeList.add(newFoe);
+        }
+    }
+    public void startAgain(){
+        System.out.println("Start Again");
+        myHero.startAgain(); //A changer (mêmes obstacles)
+        timer.start();
+        camera.startAgain();
+        startAgainButton.setVisible(false);
+        homeButton.setVisible(false);
+        gameOver.hideImage();
+        numberOfLives=3;
+    }
+    public void startRunning()
+    {
+        if (myHero.getAtt()==0) {
+            this.setOnKeyPressed(ev -> {
+                if (ev.getCode() == KeyCode.ENTER) {
+                    System.out.println("RUN");
+                    myHero.run();
+
+                }
+            });
+        }
+    }
+    public void jump(){
+        if (myHero.getAtt()==1) {
+            this.setOnKeyPressed(ev -> {
+                if (ev.getCode() == KeyCode.SPACE) {
+                    System.out.println("JUMP");
+                    myHero.jump();
+                }
+            });
+        }
+    }
+    public void followHero(){
+        myHero.getAnimatedView().setX(myHero.getX()-camera.getX());
+        myHero.getAnimatedView().setY(myHero.getY()-camera.getY());
     }
 }
