@@ -13,10 +13,12 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -114,6 +116,7 @@ public class GameScene extends Scene {
         camera = new Camera(1200,0,myHero);
         timer.start();
         long time=0;
+        gamesound();
         render(time);
 
 
@@ -164,7 +167,7 @@ public class GameScene extends Scene {
                     if (myHero.getInvincibility()<0)
                     {
                         test = true;
-                        myHero.isinvincible();
+                        if (numberOfLives>1) myHero.isinvincible();
                     }
                     hitFoe = ufoe;
                     now = time;
@@ -193,9 +196,16 @@ public class GameScene extends Scene {
             }
             else
             {
-                if (((numberOfLives==0)&(Math.abs(camera.getVx())<0.01)&(camera.getX()< myHero.getX()))) {
-                    timer.stop();
-                    highScoreScene.update();
+                if (numberOfLives==0) {
+                    gameS.stop();
+                    if ((Math.abs(camera.getVx())<0.01)&(camera.getX()< myHero.getX()))
+                    {
+
+                        losesound();
+                        timer.stop();
+                        highScoreScene.update();
+                    }
+
                 }
                 writeFile("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\high_score.txt",scoreTotal);
 
@@ -207,6 +217,7 @@ public class GameScene extends Scene {
 
                 startAgainButton.setOnAction(e -> {
                     startAgain();
+                    gameS.play();
                 });
                 startAgainButton.setVisible(true);
                 homeButton.setVisible(true);
@@ -237,6 +248,23 @@ public class GameScene extends Scene {
 
 
 
+    }
+    MediaPlayer loseS;
+    public void losesound(){
+        Media h=new Media(Paths.get("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\LOSE.wav").toUri().toString());
+        loseS= new MediaPlayer(h);
+        loseS.play();
+    }
+    MediaPlayer gameS;
+    public void gamesound(){
+        Media h=new Media(Paths.get("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\SONG.wav").toUri().toString());
+        gameS= new MediaPlayer(h);
+        gameS.setOnEndOfMedia(new Runnable() {
+            public void run() {
+                gameS.seek(Duration.ZERO);
+            }
+        });
+        gameS.play();
     }
     public void createFoes(Random r){
         foeList=new ArrayList<Foe>();

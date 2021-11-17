@@ -1,7 +1,11 @@
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Rectangle;
+
+import java.nio.file.Paths;
 
 abstract public class AnimatedThing {
     public double getX() {
@@ -75,11 +79,13 @@ abstract public class AnimatedThing {
         offs = 260;
         //animatedView.setViewport(new Rectangle2D(4+index*offs,2,w_size,97));
         animatedView.setViewport(new Rectangle2D(index*offs,0,w_size,317));
+        Supsound();
     }
     void update(long time, double elapsedTime){
         //this.ax+=(0.000000001*elapsedTime);
         //this.vx+=this.ax*elapsedTime;
         invincible.setImage(null);
+        if ((att==0)||(invincibility<0)) supersound.stop();
         if ((invincibility>=0)&(att!=0))
         {
             invincible.setImage(imInv);
@@ -129,10 +135,22 @@ abstract public class AnimatedThing {
 
     public void jump() {
         this.att=2;
-
+        sound();
         if (y==300) this.vy=-Math.sqrt(2*150*this.g);
         //vy=-0.75;
 
+    }
+    MediaPlayer jumpsound;
+    public void sound(){
+        Media h=new Media(Paths.get("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\JUMP.wav").toUri().toString());
+        jumpsound= new MediaPlayer(h);
+        jumpsound.play();
+    }
+    MediaPlayer supersound;
+    public void Supsound(){
+        Media h=new Media(Paths.get("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\SUPER.wav").toUri().toString());
+        supersound= new MediaPlayer(h);
+        //supersound.play();
     }
     public void stop()
     {
@@ -157,6 +175,7 @@ abstract public class AnimatedThing {
     }
     public void isinvincible() {
         invincibility=6000.0;
+        supersound.play();
 
 
     }

@@ -10,10 +10,14 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
+import java.nio.file.Paths;
 
 
 public class Hellodemo extends Application{
         public void start(Stage primaryStage){
+            backmusic("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\WELCOME.wav");
             primaryStage.setTitle("Runner Game");
 
             Group root2 = new Group();
@@ -40,32 +44,38 @@ public class Hellodemo extends Application{
             root2.getChildren().add(instButton);
 
             instButton.setOnAction(e -> {
+                clicksound();
                 primaryStage.setScene(is);
             });
 
             homeButton1.setOnAction(e -> {
+                clicksound();
                 primaryStage.setScene(ws);
+                welcomeS.play();
             });
             homeButton2.setOnAction(e -> {
+                clicksound();
                 primaryStage.setScene(ws);
+                welcomeS.play();
             });
             homeButton3.setOnAction(e -> {
+                clicksound();
                 primaryStage.setScene(ws);
+                welcomeS.play();
             });
             hsButton.setOnAction(e -> {
+                clicksound();
                 primaryStage.setScene(hs);
                 //hs.update();
             });
 
             startButton.setOnAction(e -> {
+                clicksound();
+                welcomeS.stop();
                 Group root = new Group();
                 GameScene gs = new GameScene(root,saButton,homeButton3,hs);
                 primaryStage.setScene(gs);
             });
-
-
-
-
 
 
             primaryStage.setScene(ws);
@@ -75,7 +85,23 @@ public class Hellodemo extends Application{
         public static void main(String[] args) {
             launch(args);
 
-
+        }
+        MediaPlayer welcomeS;
+        public void backmusic(String f){
+            Media h=new Media(Paths.get(f).toUri().toString());
+            welcomeS= new MediaPlayer(h);
+            welcomeS.setOnEndOfMedia(new Runnable() {
+                public void run() {
+                    welcomeS.seek(Duration.ZERO);
+                }
+            });
+            welcomeS.play();
+        }
+        MediaPlayer clickS;
+        public void clicksound(){
+            Media h=new Media(Paths.get("C:\\Users\\cheik\\IdeaProjects\\Project_runner_java\\img\\CLICK.wav").toUri().toString());
+            clickS= new MediaPlayer(h);
+            clickS.play();
         }
         public Button newButton(double x, double y, double w, double h,String f,String c)
         {
